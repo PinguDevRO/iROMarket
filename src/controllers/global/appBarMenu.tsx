@@ -28,7 +28,7 @@ const AppBarMenuController = () => {
         refreshAllData();
         const interval = setInterval(() => {
             refreshAllData();
-        }, 60000);
+        }, 300000);
 
         return () => clearInterval(interval);
     }, []);

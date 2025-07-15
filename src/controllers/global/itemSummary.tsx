@@ -59,7 +59,7 @@ const ItemSummaryController = () => {
         refreshAllData();
         const interval = setInterval(() => {
             refreshAllData();
-        }, 60000);
+        }, 180000);
 
         return () => clearInterval(interval);
     }, []);

@@ -45,7 +45,7 @@ const ItemListingController = ({
         refreshAllData(itemIdQuery);
         const interval = setInterval(() => {
             refreshAllData(itemIdQuery);
-        }, 60000);
+        }, 180000);
 
         return () => clearInterval(interval);
     }, [itemIdQuery]);

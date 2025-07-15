@@ -14,6 +14,7 @@ import {
     Model
 } from '@/controllers/global/marketSummary';
 import { red, brown, green, grey, yellow, blue } from '@mui/material/colors';
+import Image from 'next/image';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import Paper from '@mui/material/Paper';
@@ -33,7 +34,7 @@ import StorefrontIcon from '@mui/icons-material/Storefront';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import StarsIcon from '@mui/icons-material/Stars';
 import Loading from "@/components/Loading/Loading";
-import { CustomTypography } from "@/utils/component_utils";
+import { CustomTypography, ImgWrapper } from "@/utils/component_utils";
 import { useTheme, useMediaQuery } from '@mui/material';
 import { COLORS } from "@/theme/colors";
 
@@ -167,20 +168,27 @@ const MarketComponent = ({
                                                 color: COLORS.third_background_text,
                                                 py: 0.25,
                                                 px: 0,
+                                                gap: 1,
                                                 alignItems: "center",
                                             }}
                                         >
+                                            <ImgWrapper>
+                                                <Image
+                                                    className="dark"
+                                                    src={`https://db.irowiki.org/image/item/${item.itemId}.png`}
+                                                    alt={item.itemName}
+                                                    width={24}
+                                                    height={24}
+                                                    style={{ objectFit: "contain" }}
+                                                />
+                                            </ImgWrapper>
                                             <CustomTypography
                                                 color={COLORS.third_background_text}
                                                 variant="body2"
                                                 component="div"
                                                 sx={{ display: 'flex', alignItems: 'center' }}
                                             >
-
                                                 <Box>
-                                                    <ListItemIcon sx={{ minWidth: 20, mt: 0.2 }}>
-                                                        <FiberManualRecordIcon sx={{ color: COLORS.third_background_text, fontSize: '0.5em' }} />
-                                                    </ListItemIcon>
                                                     <Box
                                                         component="span"
                                                         className="hover:underline cursor-pointer"
@@ -192,12 +200,13 @@ const MarketComponent = ({
                                                         title={`${item.itemName} (${item.itemId})`}
                                                         onClick={() => handleRedirectListing(item.itemId)}
                                                     >
-                                                        {item.itemName}:
+                                                        {item.itemName}
                                                     </Box>
-                                                    <Box component="span" sx={{ display: 'block', paddingLeft: '2.5ch' }}>
+                                                    <Box component="span" sx={{ display: 'block' }}>
                                                         {item.transactionQuantity} units in {item.transactionVolume} transactions
                                                     </Box>
                                                 </Box>
+
                                             </CustomTypography>
                                         </ListItem>
                                     ))}
@@ -228,9 +237,20 @@ const MarketComponent = ({
                                                 color: COLORS.third_background_text,
                                                 py: 0.25,
                                                 px: 0,
+                                                gap: 1,
                                                 alignItems: "center",
                                             }}
                                         >
+                                            <ImgWrapper>
+                                                <Image
+                                                    className="dark"
+                                                    src={`https://db.irowiki.org/image/item/${item.itemId}.png`}
+                                                    alt={item.itemName}
+                                                    width={24}
+                                                    height={24}
+                                                    style={{ objectFit: "contain" }}
+                                                />
+                                            </ImgWrapper>
                                             <CustomTypography
                                                 color={COLORS.third_background_text}
                                                 variant="body2"
@@ -239,9 +259,6 @@ const MarketComponent = ({
                                             >
 
                                                 <Box>
-                                                    <ListItemIcon sx={{ minWidth: 20, mt: 0.2 }}>
-                                                        <FiberManualRecordIcon sx={{ color: COLORS.third_background_text, fontSize: '0.5em' }} />
-                                                    </ListItemIcon>
                                                     <Box
                                                         component="span"
                                                         className="hover:underline cursor-pointer"
@@ -253,9 +270,9 @@ const MarketComponent = ({
                                                         title={`${item.itemName} (${item.itemId})`}
                                                         onClick={() => handleRedirectListing(item.itemId)}
                                                     >
-                                                        {item.itemName}:
+                                                        {item.itemName}
                                                     </Box>
-                                                    <Box component="span" sx={{ display: 'block', paddingLeft: '2.5ch' }}>
+                                                    <Box component="span" sx={{ display: 'block' }}>
                                                         {item.transactionQuantity} units in {item.transactionVolume} transactions
                                                     </Box>
                                                 </Box>
@@ -289,9 +306,20 @@ const MarketComponent = ({
                                                 color: COLORS.third_background_text,
                                                 py: 0.25,
                                                 px: 0,
+                                                gap: 1,
                                                 alignItems: "center",
                                             }}
                                         >
+                                            <ImgWrapper>
+                                                <Image
+                                                    className="dark"
+                                                    src={`https://db.irowiki.org/image/item/${item.itemId}.png`}
+                                                    alt={item.itemName}
+                                                    width={24}
+                                                    height={24}
+                                                    style={{ objectFit: "contain" }}
+                                                />
+                                            </ImgWrapper>
                                             <CustomTypography
                                                 color={COLORS.third_background_text}
                                                 variant="body2"
@@ -300,9 +328,6 @@ const MarketComponent = ({
                                             >
 
                                                 <Box>
-                                                    <ListItemIcon sx={{ minWidth: 20, mt: 0.2 }}>
-                                                        <FiberManualRecordIcon sx={{ color: COLORS.third_background_text, fontSize: '0.5em' }} />
-                                                    </ListItemIcon>
                                                     <Box
                                                         component="span"
                                                         className="hover:underline cursor-pointer"
@@ -314,9 +339,9 @@ const MarketComponent = ({
                                                         title={`${item.itemName} (${item.itemId})`}
                                                         onClick={() => handleRedirectListing(item.itemId)}
                                                     >
-                                                        {item.itemName}:
+                                                        {item.itemName}
                                                     </Box>
-                                                    <Box component="span" sx={{ display: 'block', paddingLeft: '2.5ch' }}>
+                                                    <Box component="span" sx={{ display: 'block' }}>
                                                         {item.transactionQuantity} units listed {item.transactionVolume} times
                                                     </Box>
                                                 </Box>
@@ -353,6 +378,9 @@ const MarketComponent = ({
                                                 alignItems: "center",
                                             }}
                                         >
+                                            <ListItemIcon sx={{ minWidth: 20, mt: 0.2 }}>
+                                                <FiberManualRecordIcon sx={{ color: COLORS.third_background_text, fontSize: '0.5em' }} />
+                                            </ListItemIcon>
                                             <CustomTypography
                                                 color={COLORS.third_background_text}
                                                 variant="body2"
@@ -361,9 +389,6 @@ const MarketComponent = ({
                                             >
 
                                                 <Box>
-                                                    <ListItemIcon sx={{ minWidth: 20, mt: 0.2 }}>
-                                                        <FiberManualRecordIcon sx={{ color: COLORS.third_background_text, fontSize: '0.5em' }} />
-                                                    </ListItemIcon>
                                                     <Box
                                                         component="span"
                                                         className="hover:underline cursor-pointer"
@@ -377,7 +402,7 @@ const MarketComponent = ({
                                                     >
                                                         {player.playerName}
                                                     </Box>
-                                                    <Box component="span" sx={{ display: 'block', paddingLeft: '2.5ch' }}>
+                                                    <Box component="span" sx={{ display: 'block' }}>
                                                         Earned {player.transactionMoney}z
                                                     </Box>
                                                 </Box>

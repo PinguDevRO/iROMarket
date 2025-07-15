@@ -177,7 +177,7 @@ const ServerStatus = ({
             </Box>
             <Box key={'chaos-players-value'} flexGrow={1} display="flex" flexDirection="column" alignItems="center" justifyContent="center" gap={0.5}>
               <CustomTypography
-                color={green[400]}
+                color={yellow[400]}
                 variant="body2"
                 component="div"
                 sx={{

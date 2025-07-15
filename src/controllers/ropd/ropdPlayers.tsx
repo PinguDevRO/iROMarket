@@ -55,7 +55,7 @@ const RoPDPlayersController = () => {
         refreshAllData();
         const interval = setInterval(() => {
             refreshAllData();
-        }, 60000);
+        }, 600000);
 
         return () => clearInterval(interval);
     }, []);
