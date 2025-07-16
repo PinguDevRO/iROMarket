@@ -27,7 +27,7 @@ import Skeleton from '@mui/material/Skeleton';
 import CircleIcon from '@mui/icons-material/Circle';
 import WarningIcon from '@mui/icons-material/Warning';
 import { CustomTypography } from "@/utils/component_utils";
-import { red, orange, green, yellow } from '@mui/material/colors';
+import { red, orange, green, yellow, pink } from '@mui/material/colors';
 import { COLORS } from '@/theme/colors';
 import { compareDateNow, isoStringToFormat } from '@/utils/date_utils';
 
@@ -237,7 +237,7 @@ const ServerStatus = ({
             </Box>
             <Box key={'freya-players-value'} flexGrow={1} display="flex" flexDirection="column" alignItems="center" justifyContent="center" gap={0.5}>
               <CustomTypography
-                color={red[400]}
+                color={pink[100]}
                 variant="body2"
                 component="div"
                 sx={{
