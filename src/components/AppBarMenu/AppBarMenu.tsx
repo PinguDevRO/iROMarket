@@ -27,7 +27,7 @@ import Skeleton from '@mui/material/Skeleton';
 import CircleIcon from '@mui/icons-material/Circle';
 import WarningIcon from '@mui/icons-material/Warning';
 import { CustomTypography } from "@/utils/component_utils";
-import { red, orange, green, yellow, pink } from '@mui/material/colors';
+import { red, orange, green, yellow } from '@mui/material/colors';
 import { COLORS } from '@/theme/colors';
 import { compareDateNow, isoStringToFormat } from '@/utils/date_utils';
 
@@ -177,7 +177,7 @@ const ServerStatus = ({
             </Box>
             <Box key={'chaos-players-value'} flexGrow={1} display="flex" flexDirection="column" alignItems="center" justifyContent="center" gap={0.5}>
               <CustomTypography
-                color={yellow[400]}
+                color={COLORS.internal_link_text}
                 variant="body2"
                 component="div"
                 sx={{
@@ -207,7 +207,7 @@ const ServerStatus = ({
             </Box>
             <Box key={'thor-players-value'} flexGrow={1} display="flex" flexDirection="column" alignItems="center" justifyContent="center" gap={0.5}>
               <CustomTypography
-                color={orange[400]}
+                color={COLORS.internal_link_text}
                 variant="body2"
                 component="div"
                 sx={{
@@ -237,7 +237,7 @@ const ServerStatus = ({
             </Box>
             <Box key={'freya-players-value'} flexGrow={1} display="flex" flexDirection="column" alignItems="center" justifyContent="center" gap={0.5}>
               <CustomTypography
-                color={pink[100]}
+                color={COLORS.internal_link_text}
                 variant="body2"
                 component="div"
                 sx={{
