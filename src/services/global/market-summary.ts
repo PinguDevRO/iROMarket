@@ -1,33 +1,44 @@
 import { AxiosGet, AxiosResponse } from "../utils";
 
 export interface GetMarketSummaryResponse {
-    offline_shops: number;
-    online_shops: number;
-    total_transaction_money: number;
-    total_transaction_quantity: number;
-    total_transaction_tax: number;
-    top_sold_items: GetTopResponse[];
-    top_bought_items: GetTopResponse[];
-    top_listed_items: GetTopResponse[];
-    top_earners: GetEarnersResponse[];
+    shops: GetShopResponse;
+    transactions: GetTransactionResponse;
+    sold_items: GetTopResponse[];
+    bought_items: GetTopResponse[];
+    listed_items: GetTopResponse[];
+    earners: GetEarnersResponse[];
+};
+
+export interface GetShopResponse {
+    online: number;
+    offline: number;
+    total: number;
+};
+
+export interface GetTransactionResponse {
+    transaction_volume: number;
+    transaction_quantity: number;
+    taxed_volume: number;
 };
 
 export interface GetTopResponse {
     item_id: number;
     item_name: string;
-    transaction_volume: number;
-    transaction_quantity: number;
+    transaction_count: number;
+    total_units: number;
 };
 
 export interface GetEarnersResponse {
-    player_id: number;
+    account_id: number;
     player_name: string;
-    transaction_money: number;
+    sales: number;
+    purchases: number;
+    earnings: number;
 };
 
 const GetMarketSummary = async (): Promise<GetMarketSummaryResponse> => {
-    const url = "https://fenixapi.gay/summary";
-    const response: AxiosResponse<GetMarketSummaryResponse> = await AxiosGet(url);
+    const url = process.env.NEXT_PUBLIC_MARKET_API_URL ? process.env.NEXT_PUBLIC_MARKET_API_URL : "";
+    const response: AxiosResponse<GetMarketSummaryResponse> = await AxiosGet(`${url}/summary`);
     return response.data;
 };
 

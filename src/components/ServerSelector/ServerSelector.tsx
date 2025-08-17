@@ -1,42 +1,22 @@
-import { useEffect, useState } from 'react';
-import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import { SelectChangeEvent } from '@mui/material';
 import { COLORS } from '@/theme/colors';
+import { capitalizeStr } from '@/utils/string_utils';
+import { useStore, ServerKind } from '@/store/useStore';
 
-const DEFAULT_QUERY_VALUE = 'Chaos';
-const OPTIONS = ['Chaos', 'Thor', 'Freya'];
+const OPTIONS = ['chaos', 'thor', 'freya'];
 
 const ServerSelector = () => {
-    const router = useRouter();
-    const pathname = usePathname();
-    const searchParams = useSearchParams();
-    const [server, setServer] = useState(DEFAULT_QUERY_VALUE);
+    const server = useStore((x) => x.server);
+    const setServer = useStore((x) => x.set_server);
 
     const handleChange = (event: SelectChangeEvent) => {
         const newValue = event.target.value;
-        setServer(newValue);
-
-        const current = new URLSearchParams(searchParams.toString());
-        current.set('server', newValue);
-        router.push(`${pathname}?${current.toString()}`);
+        setServer(newValue.toLowerCase() as ServerKind);
     };
-
-    useEffect(() => {
-        const current = new URLSearchParams(searchParams.toString());
-        const existing = current.get('server');
-
-        if (!existing) {
-            current.set('server', DEFAULT_QUERY_VALUE);
-            router.replace(`${pathname}?${current.toString()}`);
-            setServer(DEFAULT_QUERY_VALUE);
-        } else {
-            setServer(existing);
-        }
-    }, [pathname, searchParams, router]);
 
     return (
         <FormControl
@@ -78,7 +58,7 @@ const ServerSelector = () => {
             >
                 {OPTIONS.map((opt, idx) => (
                     <MenuItem key={idx} value={opt}>
-                        {opt}
+                        {capitalizeStr(opt)}
                     </MenuItem>
                 ))}
             </Select>

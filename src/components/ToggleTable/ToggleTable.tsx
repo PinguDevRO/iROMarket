@@ -1,42 +1,22 @@
-import { ChangeEvent, useEffect, useState } from 'react';
-import { useRouter, usePathname, useSearchParams } from 'next/navigation';
+import { ChangeEvent } from 'react';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import { COLORS } from '@/theme/colors';
 import { capitalizeStr } from '@/utils/string_utils';
+import { useStore, ItemSaleKind } from '@/store/useStore';
 
-const DEFAULT_QUERY_VALUE = 'vending';
 const OPTIONS = ['vending', 'buying'];
 
 const ToggleTable = () => {
-    const router = useRouter();
-    const pathname = usePathname();
-    const searchParams = useSearchParams();
-    const [toggle, setToggle] = useState<string>(DEFAULT_QUERY_VALUE);
+    const toggle = useStore((x) => x.item_sale_kind);
+    const setToggle = useStore((x) => x.set_item_sale_kind);
 
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
         const newValue = (event.target as HTMLInputElement).value;
-        setToggle(newValue);
-
-        const current = new URLSearchParams(searchParams.toString());
-        current.set('t', newValue);
-        router.push(`${pathname}?${current.toString()}`);
+        setToggle(newValue as ItemSaleKind);
     };
-
-    useEffect(() => {
-        const current = new URLSearchParams(searchParams.toString());
-        const existing = current.get('t');
-
-        if (!existing) {
-            current.set('t', DEFAULT_QUERY_VALUE);
-            router.replace(`${pathname}?${current.toString()}`);
-            setToggle(DEFAULT_QUERY_VALUE);
-        } else {
-            setToggle(existing);
-        }
-    }, [pathname, searchParams, router]);
 
     return (
         <FormControl

@@ -1,6 +1,7 @@
 'use client';
 
-import { ChangeEvent } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
+import Image from "next/image";
 import {
     useSearchParams
 } from "next/navigation";
@@ -18,10 +19,58 @@ import { CustomTypography } from "@/utils/component_utils";
 import { isNumeric } from "@/utils/string_utils";
 import { ROPDModel } from "@/models/ropd/ropd";
 import { COLORS } from '@/theme/colors';
+import PostRender from "@/services/post-render";
 import { useStore } from "@/store/useStore";
 
+const CharacterImage = ({
+    name,
+    jobId,
+} : {
+    name: string;
+    jobId: number;
+}) => {
+    const [imgSrc, setImgSrc] = useState<string | null>(null);
 
-const RoPDTable = ({
+    useEffect(() => {
+        let isMounted = true;
+
+        const fetchImage = async () => {
+            const result = await PostRender(jobId);
+            if (isMounted) {
+                setImgSrc(result);
+            }
+        };
+
+        fetchImage();
+
+        return () => {
+            isMounted = false;
+        };
+    }, [jobId]);
+
+    return imgSrc ? (
+        <Image
+            src={imgSrc}
+            alt={name}
+            width={200}
+            height={200}
+            draggable={false}
+            loading="eager"
+        />
+    ) : (
+        <Image
+            src={'/poring.png'}
+            alt={'Lazy Poring'}
+            width={200}
+            height={200}
+            draggable={false}
+            loading="eager"
+        />
+    );
+}
+
+
+const RoPDTableByAccount = ({
     title,
     data,
 }: {
@@ -36,6 +85,7 @@ const RoPDTable = ({
     const setPageSize = useStore((x) => x.set_page_size);
 
     const columns = [
+        "Character",
         "Name",
         "Job",
         "Level",
@@ -72,14 +122,6 @@ const RoPDTable = ({
                 }}
             >
                 <Table stickyHeader aria-label="sticky table">
-                    <colgroup>
-                        <col style={{ width: '37.5%' }} />
-                        <col style={{ width: '12.5%' }} />
-                        <col style={{ width: '12.5%' }} />
-                        <col style={{ width: '12.5%' }} />
-                        <col style={{ width: '12.5%' }} />
-                        <col style={{ width: '12.5%' }} />
-                    </colgroup>
                     <TableHead>
                         <TableRow>
                             {columns.map((column, idx) => (
@@ -98,9 +140,16 @@ const RoPDTable = ({
                             data.players.map((row, idx) => (
                                 <TableRow hover key={`player-row-${row.accountId}-${idx}`}>
                                     <TableCell
-                                        key={`player-row-name-${row.accountId}-${idx}`}
+                                        key={`player-row-character-${row.accountId}-${idx}`}
                                         sx={{ color: COLORS.third_background_text }}
                                         align="left"
+                                    >
+                                        <CharacterImage name={row.name} jobId={row.jobId} />
+                                    </TableCell>
+                                    <TableCell
+                                        key={`player-row-name-${row.accountId}-${idx}`}
+                                        sx={{ color: COLORS.third_background_text }}
+                                        align="center"
                                     >
                                         <a
                                             className="hover:underline cursor-pointer"
@@ -215,4 +264,4 @@ const RoPDTable = ({
     );
 }
 
-export default RoPDTable;
+export default RoPDTableByAccount;

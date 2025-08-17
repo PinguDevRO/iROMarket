@@ -1,6 +1,6 @@
 'use client';
 
-import RoPDPlayersController from "@/controllers/ropd/ropdPlayers";
+import RoPDPlayersController from "@/controllers/ropd/ropdByName";
 import { Suspense } from 'react';
 
 const RoPDRootPage = () => {

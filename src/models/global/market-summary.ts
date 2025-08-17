@@ -1,26 +1,36 @@
 import { GetMarketSummaryResponse } from "@/services/global/market-summary";
 import { numberToUSMoney } from "@/utils/string_utils";
 
+export interface ShopModel {
+    online: number;
+    offline: number;
+    total: number;
+};
+
+export interface TransactionModel {
+    transactionVolume: string;
+    transactionQuantity: string;
+    taxedVolume: string;
+};
+
 export interface TopItemModel {
     itemId: number;
     itemName: string;
-    transactionVolume: string;
-    transactionQuantity: string;
+    transactionCount: string;
+    totalUnits: string;
 };
 
 export interface TopEarnModel {
-    playerId: number;
+    accountId: number;
     playerName: string;
-    transactionMoney: string;
+    sales: string;
+    purchases: string;
+    earnings: string;
 };
 
 export interface MarketSummaryModel {
-    totalShops: number;
-    offlineShops: number;
-    onlineShops: number;
-    totalTransactionMoney: string;
-    totalTransactionQuantity: string;
-    totalTransactionTax: string;
+    shops: ShopModel;
+    transactions: TransactionModel;
     topSoldItems: TopItemModel[];
     topBoughtItems: TopItemModel[];
     topListedItems: TopItemModel[];
@@ -28,18 +38,23 @@ export interface MarketSummaryModel {
 };
 
 const MarketSummaryToModel = (data: GetMarketSummaryResponse): MarketSummaryModel => {
-    const topSoldItems: TopItemModel[] = data.top_sold_items.map((x) => { return { itemId: x.item_id, itemName: x.item_name, transactionVolume: numberToUSMoney(x.transaction_volume), transactionQuantity: numberToUSMoney(x.transaction_quantity) } });
-    const topBoughtItems: TopItemModel[] = data.top_bought_items.map((x) => { return { itemId: x.item_id, itemName: x.item_name, transactionVolume: numberToUSMoney(x.transaction_volume), transactionQuantity: numberToUSMoney(x.transaction_quantity) } });
-    const topListedItems: TopItemModel[] = data.top_listed_items.map((x) => { return { itemId: x.item_id, itemName: x.item_name, transactionVolume: numberToUSMoney(x.transaction_volume), transactionQuantity: numberToUSMoney(x.transaction_quantity) } });
-    const topEarners: TopEarnModel[] = data.top_earners.map((x) => { return { playerId: x.player_id, playerName: x.player_name, transactionMoney: numberToUSMoney(x.transaction_money) } });
+
+    const topSoldItems: TopItemModel[] = data.sold_items.map((x) => { return { itemId: x.item_id, itemName: x.item_name, transactionCount: numberToUSMoney(x.transaction_count), totalUnits: numberToUSMoney(x.total_units) } });
+    const topBoughtItems: TopItemModel[] = data.bought_items.map((x) => { return { itemId: x.item_id, itemName: x.item_name, transactionCount: numberToUSMoney(x.transaction_count), totalUnits: numberToUSMoney(x.total_units) } });
+    const topListedItems: TopItemModel[] = data.listed_items.map((x) => { return { itemId: x.item_id, itemName: x.item_name, transactionCount: numberToUSMoney(x.transaction_count), totalUnits: numberToUSMoney(x.total_units) } });
+    const topEarners: TopEarnModel[] = data.earners.map((x) => { return { accountId: x.account_id, playerName: x.player_name, sales: numberToUSMoney(x.sales), purchases: numberToUSMoney(x.purchases), earnings: numberToUSMoney(x.earnings) } });
 
     const output: MarketSummaryModel = {
-        totalShops: data.offline_shops + data.online_shops,
-        offlineShops: data.offline_shops,
-        onlineShops: data.online_shops,
-        totalTransactionMoney: numberToUSMoney(data.total_transaction_money),
-        totalTransactionQuantity: numberToUSMoney(data.total_transaction_quantity),
-        totalTransactionTax: numberToUSMoney(data.total_transaction_tax),
+        shops: {
+            online: data.shops.online,
+            offline: data.shops.offline,
+            total: data.shops.total,
+        },
+        transactions: {
+            transactionVolume: numberToUSMoney(data.transactions.transaction_volume),
+            transactionQuantity: numberToUSMoney(data.transactions.transaction_quantity),
+            taxedVolume: numberToUSMoney(data.transactions.taxed_volume),
+        },
         topSoldItems: topSoldItems,
         topBoughtItems: topBoughtItems,
         topListedItems: topListedItems,

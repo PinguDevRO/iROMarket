@@ -2,18 +2,12 @@
 
 import {
     useEffect,
-    useRef,
     useState
 } from "react";
-import {
-    useRouter,
-    useSearchParams
-} from "next/navigation";
-import RoPDByIdToModel, {
-    PlayerDetailModel
-} from "@/models/ropd/ropd-id";
+import { useStore } from "@/store/useStore";
+import ROPDToModel, { ROPDModel } from "@/models/ropd/ropd";
 
-import GetRoPDByAccountId from "@/services/ropd/ropd-id";
+import GetRoPD from "@/services/ropd/ropd";
 
 import RoPDByIdScreen from "@/screens/ropd/ropdById";
 
@@ -22,10 +16,10 @@ export interface EndpointStatus {
     error: boolean;
 };
 
-export type EndpointName = "getPlayerById" | "";
+export type EndpointName = "getPlayerData" | "";
 
 export interface Model {
-    playerListData: PlayerDetailModel[] | undefined;
+    ropdData: ROPDModel | undefined;
     lastUpdate: Date | undefined;
 };
 
@@ -34,31 +28,19 @@ const RoPDByIdController = ({
 }: {
     accountIdQuery: number;
 }) => {
-    const searchParams = useSearchParams();
-    const router = useRouter();
-    const searchServerRef = useRef<string>('');
+    const page = useStore((x) => x.page);
+    const pageSize = useStore((x) => x.page_size);
+    const server = useStore((x) => x.server);
     const [model, setModel] = useState<Partial<Model>>();
     const [endpoints, setEndpoints] = useState<Partial<Record<EndpointName, EndpointStatus>>>();
 
     useEffect(() => {
-        const current = new URLSearchParams(searchParams.toString());
-        const serverInput = searchParams.get('server');
-        const existing = current.get('q');
-
-        if(existing !== null && existing.length > 0){
-            router.push(`/ropd?q=${existing}`)
-        }
-
-        if(serverInput !== undefined && typeof serverInput === 'string'){
-            searchServerRef.current = serverInput;
-            refreshAllData(accountIdQuery);
-        }
-
-    }, [searchParams, router]);
+        refreshAllData(accountIdQuery);
+    }, [accountIdQuery]);
 
     const refreshAllData = async (accountId: number) => {
-        if(accountId > 0 && searchServerRef.current.length > 0){
-            await loadPlayerById(accountId, searchServerRef.current);
+        if (accountId > 0) {
+            await loadROPD(server, page, pageSize, undefined, accountId);
         }
     };
 
@@ -101,16 +83,16 @@ const RoPDByIdController = ({
         },
     });
 
-    const loadPlayerById = async (accountId: number, server: string) => {
-        const statusEndpoint = buildStatusEndpoint("getPlayerById");
+    const loadROPD = async (server: string, page: number, page_size: number, playerName?: string, accountId?: number) => {
+        const statusEndpoint = buildStatusEndpoint("getPlayerData");
         try {
             statusEndpoint.loading();
-            const response = await GetRoPDByAccountId(accountId, server);
-            const playerListData = RoPDByIdToModel(response);
-            updateModel({ playerListData });
+            const response = await GetRoPD(server, page, page_size, playerName, accountId);
+            const ropdData = ROPDToModel(response);
+            updateModel({ ropdData });
         } catch {
             statusEndpoint.error();
-            updateModel({ playerListData: undefined });
+            updateModel({ ropdData: undefined });
         } finally {
             statusEndpoint.done();
         }

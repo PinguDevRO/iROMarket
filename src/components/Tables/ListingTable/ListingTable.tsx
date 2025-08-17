@@ -1,9 +1,6 @@
 'use client';
 
-import {
-    useState,
-    ChangeEvent
-} from "react";
+import { ChangeEvent } from "react";
 import Image from "next/image";
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
@@ -17,9 +14,11 @@ import TableRow from '@mui/material/TableRow';
 import { CustomTypography } from "@/utils/component_utils";
 import ItemTooptip, { FormatPercentColor } from "../../ItemTooltip/ItemTooltip";
 import ImageTooptip from "@/components/ImageTooltip/ImageTooltip";
-import { ItemListingModel } from "@/models/listing/item-listing";
+import { ListingModel } from "@/models/listing/item-listing";
 import { ImgWrapper } from "@/utils/component_utils";
+import { isNumeric } from "@/utils/string_utils";
 import { COLORS } from '@/theme/colors';
+import { useStore } from "@/store/useStore";
 
 
 const copyToClipboard = (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
@@ -43,10 +42,13 @@ const ItemTable = ({
     data,
 }: {
     title: string;
-    data: ItemListingModel[] | undefined;
+    data: ListingModel | undefined;
 }) => {
-    const [page, setPage] = useState<number>(0);
-    const [rowsPerPage, setRowsPerPage] = useState<number>(25);
+
+    const page = useStore((x) => x.page);
+    const pageSize = useStore((x) => x.page_size);
+    const setPage = useStore((x) => x.set_page);
+    const setPageSize = useStore((x) => x.set_page_size);
 
     const columns = [
         "Name",
@@ -58,12 +60,19 @@ const ItemTable = ({
     ];
 
     const handleChangePage = (event: unknown, newPage: number) => {
-        setPage(newPage);
+        if(newPage >= 0){
+            setPage(newPage);
+        }
     };
 
     const handleChangeRowsPerPage = (event: ChangeEvent<HTMLInputElement>) => {
-        setRowsPerPage(+event.target.value);
-        setPage(0);
+        if(isNumeric(event.target.value)){
+            const newRowsPerPage = Number(event.target.value);
+            if(newRowsPerPage > 0 && newRowsPerPage <= 100){
+                setPageSize(newRowsPerPage);
+                setPage(0);
+            }
+        }
     };
 
     return (
@@ -103,9 +112,7 @@ const ItemTable = ({
                     </TableHead>
                     <TableBody>
                         {data !== undefined ? (
-                            data
-                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                .map((row, idx) => (
+                            data.items.map((row, idx) => (
                                     <TableRow hover key={`item-row-${row.itemId}-${idx}`}>
                                         <TableCell
                                             key={`item-row-name-${row.itemId}-${idx}`}
@@ -149,7 +156,7 @@ const ItemTable = ({
                                             align="center"
                                         >
                                             <CustomTypography variant="body2" component="div">
-                                                {row.itemQuantity}
+                                                {row.currentAmount}
                                             </CustomTypography>
                                         </TableCell>
                                         <TableCell
@@ -164,10 +171,10 @@ const ItemTable = ({
                                             >
                                                 <Box display="flex" flexDirection="row" alignItems="center" justifyContent="center">
                                                     <CustomTypography variant="body2" component="div">
-                                                        {row.itemPrice}&nbsp;
+                                                        {row.price}&nbsp;
                                                     </CustomTypography>
                                                     <FormatPercentColor
-                                                        value={title === 'Vending' ? row.averageSellPercent : row.averageBuyPercent}
+                                                        value={title === 'Vending' ? 0 : 0}
                                                         type={title === 'Vending' ? 'vending' : 'buying'}
                                                     />
                                                 </Box>
@@ -179,7 +186,7 @@ const ItemTable = ({
                                             align="center"
                                         >
                                             <CustomTypography variant="body2" component="div">
-                                                {row.shopName}
+                                                {row.name}
                                             </CustomTypography>
                                         </TableCell>
                                         <TableCell
@@ -188,7 +195,7 @@ const ItemTable = ({
                                             align="center"
                                         >
                                             <CustomTypography variant="body2" component="div">
-                                                {row.playerName}
+                                                {row.ownerName}
                                             </CustomTypography>
                                         </TableCell>
                                         <TableCell
@@ -199,10 +206,10 @@ const ItemTable = ({
                                             <span
                                                 className="hover:underline cursor-pointer"
                                                 style={{ color: COLORS.internal_link_text }}
-                                                title={row.shopNavigation}
+                                                title={`/navi ${row.mapName} ${row.xCoordinate}/${row.yCoordinate}`}
                                                 onClick={(el) => copyToClipboard(el)}
                                             >
-                                                {row.shopCity}
+                                                {row.mapName}
                                             </span>
                                         </TableCell>
                                     </TableRow>
@@ -230,8 +237,8 @@ const ItemTable = ({
                     flexShrink: 0,
                     overflow: 'hidden',
                 }}
-                count={data !== undefined ? data.length : 0}
-                rowsPerPage={rowsPerPage}
+                count={data !== undefined ? data.total : 0}
+                rowsPerPage={pageSize}
                 page={page}
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}

@@ -2,17 +2,12 @@
 
 import { 
     useEffect,
-    useRef,
     useState
 } from "react";
-import {
-    useSearchParams
-} from "next/navigation";
-import RoPDByIdToModel, {
-    PlayerDetailModel
-} from "@/models/ropd/ropd-id";
+import { useStore } from "@/store/useStore";
+import ROPDToModel, { ROPDModel } from "@/models/ropd/ropd";
 
-import GetRoPDPlayers from "@/services/ropd/ropd-players";
+import GetRoPD from "@/services/ropd/ropd";
 
 import RoPDPlayersScreen from "@/screens/ropd/ropdPlayers";
 
@@ -21,35 +16,21 @@ export interface EndpointStatus {
     error: boolean;
 };
 
-export type EndpointName = "getRoPDPlayers" | "";
+export type EndpointName = "getPlayerData" | "";
 
 export interface Model {
-    playerListData: PlayerDetailModel[] | undefined;
+    ropdData: ROPDModel | undefined;
     lastUpdate: Date | undefined;
 };
 
 const RoPDPlayersController = () => {
-    const searchParams = useSearchParams();
-    const searchQueryRef = useRef<string>('');
-    const searchServerRef = useRef<string>('');
+    const page = useStore((x) => x.page);
+    const pageSize = useStore((x) => x.page_size);
+    const server = useStore((x) => x.server);
+    const saleKind = useStore((x) => x.item_sale_kind);
+    const searchQuery = useStore((x) => x.search_query);
     const [model, setModel] = useState<Partial<Model>>();
     const [endpoints, setEndpoints] = useState<Partial<Record<EndpointName, EndpointStatus>>>();
-
-    useEffect(() => {
-        const queryInput = searchParams.get('q');
-        const serverInput = searchParams.get('server');
-        if(queryInput !== undefined && typeof queryInput === 'string'){
-            searchQueryRef.current = queryInput;
-        }
-
-        if(serverInput !== undefined && typeof serverInput === 'string'){
-            searchServerRef.current = serverInput;
-        }
-
-        if(searchServerRef.current.length > 0){
-            handleOnSearch(searchServerRef.current, searchQueryRef.current);
-        }
-    }, [searchParams]);
 
     useEffect(() => {
         refreshAllData();
@@ -60,14 +41,12 @@ const RoPDPlayersController = () => {
         return () => clearInterval(interval);
     }, []);
 
-    const refreshAllData = async () => {
-        if(searchServerRef.current.length > 0){
-            await loadRoPDPlayers(searchServerRef.current, searchQueryRef.current);
-        }
-    };
+    useEffect(() => {
+        refreshAllData();
+    }, [saleKind, server, page, pageSize, searchQuery]);
 
-    const handleOnSearch = async (server: string, query: string): Promise<void> => {
-        await loadRoPDPlayers(server, query);
+    const refreshAllData = async () => {
+        await loadROPD(server, page, pageSize, searchQuery, undefined);
     };
 
     const updateModel = (partialModel: | Partial<Model> | ((model: Partial<Model> | undefined) => Partial<Model>)) => {
@@ -109,16 +88,16 @@ const RoPDPlayersController = () => {
         },
     });
 
-    const loadRoPDPlayers = async (server: string, query: string) => {
-        const statusEndpoint = buildStatusEndpoint("getRoPDPlayers");
+    const loadROPD = async (server: string, page: number, page_size: number, playerName?: string, accountId?: number) => {
+        const statusEndpoint = buildStatusEndpoint("getPlayerData");
         try {
             statusEndpoint.loading();
-            const response = await GetRoPDPlayers(server, query);
-            const playerListData = RoPDByIdToModel(response);
-            updateModel({ playerListData });
+            const response = await GetRoPD(server, page, page_size, playerName, accountId);
+            const ropdData = ROPDToModel(response);
+            updateModel({ ropdData });
         } catch {
             statusEndpoint.error();
-            updateModel({ playerListData: undefined });
+            updateModel({ ropdData: undefined });
         } finally {
             statusEndpoint.done();
         }
@@ -128,7 +107,7 @@ const RoPDPlayersController = () => {
         <RoPDPlayersScreen
             model={model}
             endpoints={endpoints}
-            searchQuery={searchQueryRef.current}
+            searchQuery={searchQuery}
         />
     )
 }

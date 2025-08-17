@@ -5,3 +5,8 @@ export const numberToUSMoney = (value: number): string => {
 export const capitalizeStr = (str: string): string => {
     return str.charAt(0).toUpperCase() + str.slice(1);
 };
+
+export const isNumeric = (value: string): boolean => {
+    const testValue = String(value).trim();
+    return !isNaN(Number(testValue)) && isFinite(Number(testValue));
+};

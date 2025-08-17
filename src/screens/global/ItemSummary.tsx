@@ -9,9 +9,10 @@ import {
 import Box from "@mui/material/Box";
 import SummaryTable from "@/components/Tables/SummaryTable/SummaryTable";
 import Loading from "@/components/Loading/Loading";
-import SearchBar from "@/components/SearchBar/SearchBar";
+import ListingSearchBar from "@/components/SearchBar/ListingSearchBar";
 import ServerSelector from "@/components/ServerSelector/ServerSelector";
 import ToggleTable from "@/components/ToggleTable/ToggleTable";
+import { ItemSaleKind } from "@/store/useStore";
 
 const ItemSummaryScreen = ({
     model,
@@ -22,12 +23,12 @@ const ItemSummaryScreen = ({
     model: Partial<Model> | undefined;
     endpoints: Partial<Record<EndpointName, EndpointStatus>> | undefined;
     searchQuery: string;
-    selectedToggleTable: string;
+    selectedToggleTable: ItemSaleKind;
 }) => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
     useEffect(() => {
-        if (endpoints !== undefined && endpoints.getListingSummary !== undefined && endpoints.getListingSummary.loading) {
+        if (endpoints !== undefined && endpoints.getItemListing !== undefined && endpoints.getItemListing.loading) {
             setIsLoading(true);
         }
         else {
@@ -53,7 +54,7 @@ const ItemSummaryScreen = ({
                         width: '100%',
                     }}
                 >
-                    <SearchBar searchInput={searchQuery} />
+                    <ListingSearchBar searchInput={searchQuery} />
                     <ServerSelector />
                 </Box>
                 <ToggleTable />
@@ -63,9 +64,9 @@ const ItemSummaryScreen = ({
             ) : (
                 <Box sx={{ flex: 1, minHeight: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 4 }}>
                     {selectedToggleTable === 'vending' ? (
-                        <SummaryTable title="Vending" data={model?.listingSummaryData?.selling} />
+                        <SummaryTable title="Vending" data={model?.itemListingData} />
                     ) : selectedToggleTable === 'buying' ? (
-                        <SummaryTable title="Buying" data={model?.listingSummaryData?.buying} />
+                        <SummaryTable title="Buying" data={model?.itemListingData} />
                     ) : (
                         <></>
                     )}

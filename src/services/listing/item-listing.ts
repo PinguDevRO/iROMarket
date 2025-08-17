@@ -1,34 +1,45 @@
 import { AxiosGet, AxiosResponse } from "../utils";
 
-export interface ItemDetailsResponse {
+export interface ListingResponse {
+    items: ItemResponse[];
+    total: number;
+    page: number;
+    page_size: number;
+    pages: number;
+};
+
+export interface ItemResponse {
+    account_id: number;
+    name: string;
+    owner_name: string;
+    map_name: string;
+    x_coordinate: number;
+    y_coordinate: number;
     item_id: number;
-    item_name: string;
-    item_price: number;
-    item_quantity: number;
-    shop_name: string;
-    shop_city: string;
-    shop_navigation: string;
-    player_name: string;
-    average_sell_price: number;
-    average_sell_percent: number;
-    average_buy_price: number;
-    average_buy_percent: number;
+    full_name: string;
+    price: number;
     min_price: number;
     max_price: number;
-    sold_quantity: number;
-    sold_percent: number;
-    bought_quantity: number;
-    bought_percent: number;
+    average_sell_price: number;
+    average_buy_price: number;
+    purchased_units: number;
+    sold_units: number;
+    user_discord_id: number | null;
+    amount: number;
+    current_amount: number;
 };
 
-export interface ItemListingResponse {
-    buying: ItemDetailsResponse[];
-    selling: ItemDetailsResponse[];
-};
-
-const GetItemListing = async (itemId: number, server: string): Promise<ItemListingResponse> => {
-    const url = "https://fenixapi.gay/listing";
-    const response: AxiosResponse<ItemListingResponse> = await AxiosGet(`${url}?server=${server}&id=${itemId}`);
+const GetItemListing = async (server: string, kind: string, page: number, page_size: number, itemName?: string, itemId?: number): Promise<ListingResponse> => {
+    const url = process.env.NEXT_PUBLIC_MARKET_API_URL ? process.env.NEXT_PUBLIC_MARKET_API_URL : "";
+    if(itemName !== undefined && itemName.length > 0){
+        const response: AxiosResponse<ListingResponse> = await AxiosGet(`${url}/market/listing?server=${server}&q=${itemName}&t=${kind}&page=${page + 1}&page_size=${page_size}`);
+        return response.data;
+    }
+    if(itemId !== undefined){
+        const response: AxiosResponse<ListingResponse> = await AxiosGet(`${url}/market/listing?server=${server}&id=${itemId}&t=${kind}&page=${page + 1}&page_size=${page_size}`);
+        return response.data;
+    }
+    const response: AxiosResponse<ListingResponse> = await AxiosGet(`${url}/market/listing?server=${server}&t=${kind}&page=${page + 1}&page_size=${page_size}`);
     return response.data;
 };
 

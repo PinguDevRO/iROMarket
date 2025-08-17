@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
@@ -8,13 +9,19 @@ import SearchIcon from '@mui/icons-material/Search';
 import { COLORS } from '@/theme/colors';
 import { useStore } from '@/store/useStore';
 
-const SearchBar = ({
+const RopdSearchBar = ({
     searchInput
 }: {
     searchInput?: string;
 }) => {
+    const router = useRouter();
     const [query, setQuery] = useState<string>('');
     const setSearchQuery = useStore((x) => x.set_search_query);
+
+    const handleOnSearch = (query: string) => {
+        setSearchQuery(query);
+        router.push('/ropd');
+    };
 
     const sanitizeInput = (value: string) => {
         return value.replace(/[^\w\s]/gi, '');
@@ -22,7 +29,7 @@ const SearchBar = ({
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
         if (e.key === 'Enter') {
-            setSearchQuery(query);
+            handleOnSearch(query);
         }
     };
 
@@ -30,7 +37,7 @@ const SearchBar = ({
         if (searchInput !== undefined && searchInput.length > 0 && searchInput !== query) {
             const sanitized = sanitizeInput(searchInput);
             setQuery(sanitized);
-            setSearchQuery(sanitized);
+            handleOnSearch(sanitized);
         }
     }, [searchInput]);
 
@@ -65,7 +72,7 @@ const SearchBar = ({
                 input: {
                     endAdornment: (
                         <InputAdornment position="end">
-                            <IconButton onClick={() => setSearchQuery(query)} edge="end">
+                            <IconButton onClick={() => handleOnSearch(query)} edge="end">
                                 <SearchIcon sx={{ color: COLORS.secondary_background_text }} />
                             </IconButton>
                         </InputAdornment>
@@ -76,4 +83,4 @@ const SearchBar = ({
     );
 };
 
-export default SearchBar;
+export default RopdSearchBar;

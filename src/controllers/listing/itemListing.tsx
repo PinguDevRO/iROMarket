@@ -2,16 +2,10 @@
 
 import {
     useEffect,
-    useRef,
     useState
 } from "react";
-import {
-    useRouter,
-    useSearchParams
-} from "next/navigation";
-import ItemListingToModel, {
-    ItemSummaryModel
-} from "@/models/listing/item-listing";
+import { useStore, ItemSaleKind } from "@/store/useStore";
+import ItemListingToModel, { ListingModel } from "@/models/listing/item-listing";
 
 import GetItemListing from "@/services/listing/item-listing";
 
@@ -24,8 +18,10 @@ export interface EndpointStatus {
 
 export type EndpointName = "getItemListing" | "";
 
+export type ItemListingKind = "vending" | "buying";
+
 export interface Model {
-    itemListingData: ItemSummaryModel | undefined;
+    itemListingData: ListingModel | undefined;
     lastUpdate: Date | undefined;
 };
 
@@ -34,14 +30,15 @@ const ItemListingController = ({
 }: {
     itemIdQuery: number;
 }) => {
-    const searchParams = useSearchParams();
-    const router = useRouter();
-    const searchServerRef = useRef<string>('');
-    const toggleTableRef = useRef<string>('');
+    const page = useStore((x) => x.page);
+    const pageSize = useStore((x) => x.page_size);
+    const server = useStore((x) => x.server);
+    const saleKind = useStore((x) => x.item_sale_kind);
     const [model, setModel] = useState<Partial<Model>>();
     const [endpoints, setEndpoints] = useState<Partial<Record<EndpointName, EndpointStatus>>>();
 
     useEffect(() => {
+
         refreshAllData(itemIdQuery);
         const interval = setInterval(() => {
             refreshAllData(itemIdQuery);
@@ -51,29 +48,12 @@ const ItemListingController = ({
     }, [itemIdQuery]);
 
     useEffect(() => {
-        const current = new URLSearchParams(searchParams.toString());
-        const serverInput = searchParams.get('server');
-        const tobbleTableInput = searchParams.get('t');
-        const existing = current.get('q');
-
-        if(existing !== null && existing.length > 0){
-            router.push(`/?q=${existing}`)
-        }
-
-        if(serverInput !== undefined && typeof serverInput === 'string'){
-            searchServerRef.current = serverInput;
-            refreshAllData(itemIdQuery);
-        }
-
-        if(tobbleTableInput !== undefined && typeof tobbleTableInput === 'string'){
-            toggleTableRef.current = tobbleTableInput;
-        }
-
-    }, [searchParams, router]);
+        refreshAllData(itemIdQuery);
+    }, [saleKind, server, page, pageSize]);
 
     const refreshAllData = async (itemId: number) => {
-        if(itemId > 0 && searchServerRef.current.length > 0){
-            await loadItemListing(itemId, searchServerRef.current);
+        if(itemId > 0 && server.length > 0){
+            await loadItemListing(server, saleKind, page, pageSize, undefined, itemId);
         }
     };
 
@@ -116,11 +96,11 @@ const ItemListingController = ({
         },
     });
 
-    const loadItemListing = async (itemId: number, server: string) => {
+    const loadItemListing = async (server: string, kind: ItemSaleKind, page: number, page_size: number, itemName?: string, itemId?: number) => {
         const statusEndpoint = buildStatusEndpoint("getItemListing");
         try {
             statusEndpoint.loading();
-            const response = await GetItemListing(itemId, server);
+            const response = await GetItemListing(server, kind, page, page_size, itemName, itemId);
             const itemListingData = ItemListingToModel(response);
             updateModel({ itemListingData });
         } catch {
@@ -135,7 +115,7 @@ const ItemListingController = ({
         <ItemListingScreen
             model={model}
             endpoints={endpoints}
-            selectedToggleTable={toggleTableRef.current}
+            selectedToggleTable={saleKind}
         />
     )
 }

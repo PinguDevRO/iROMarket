@@ -1,82 +1,65 @@
-import { ItemListingResponse } from "@/services/listing/item-listing";
+import { ListingResponse } from "@/services/listing/item-listing";
 import { numberToUSMoney } from "@/utils/string_utils";
 
-export interface ItemListingModel {
+export interface ListingModel {
+    items: ItemModel[];
+    total: number;
+    page: number;
+    pageSize: number;
+    pages: number;
+};
+
+export interface ItemModel {
+    accountId: number;
+    name: string;
+    ownerName: string;
+    mapName: string;
+    xCoordinate: number;
+    yCoordinate: number;
     itemId: number;
     itemName: string;
-    itemPrice: string;
-    itemQuantity: string;
-    shopName: string;
-    shopCity: string;
-    shopNavigation: string;
-    playerName: string;
-    averageSellPrice: string;
-    averageSellPercent: number;
-    averageBuyPrice: string;
-    averageBuyPercent: number;
+    price: string;
     minPrice: string;
     maxPrice: string;
-    soldQuantity: string;
-    soldPercent: number;
-    boughtQuantity: string;
-    boughtPercent: number;
+    averageSellPrice: string;
+    averageBuyPrice: string;
+    purchasedUnits: string;
+    soldUnits: string;
+    userDiscordId: number | null;
+    amount: string;
+    currentAmount: string;
 };
 
-export interface ItemSummaryModel {
-    buying: ItemListingModel[];
-    selling: ItemListingModel[];
-};
-
-const ItemListingToModel = (data: ItemListingResponse): ItemSummaryModel => {
-    const buying: ItemListingModel[] = data.buying.map((x) => {
+const ItemListingToModel = (data: ListingResponse): ListingModel => {
+    const items: ItemModel[] = data.items.map((x) => {
         return {
+            accountId: x.account_id,
+            name: x.name,
+            ownerName: x.owner_name,
+            mapName: x.map_name,
+            xCoordinate: x.x_coordinate,
+            yCoordinate: x.y_coordinate,
             itemId: x.item_id,
-            itemName: x.item_name,
-            itemPrice: `${numberToUSMoney(x.item_price)}z`,
-            itemQuantity: numberToUSMoney(x.item_quantity),
-            shopName: x.shop_name,
-            shopCity: x.shop_city,
-            shopNavigation: x.shop_navigation,
-            playerName: x.player_name,
-            averageSellPrice: `${numberToUSMoney(x.average_sell_price)}z`,
-            averageSellPercent: x.average_sell_percent,
-            averageBuyPrice: `${numberToUSMoney(x.average_buy_price)}z`,
-            averageBuyPercent: x.average_buy_percent,
-            minPrice: `${numberToUSMoney(x.min_price)}z`,
-            maxPrice: `${numberToUSMoney(x.max_price)}z`,
-            soldQuantity: numberToUSMoney(x.sold_quantity),
-            soldPercent: x.sold_percent,
-            boughtQuantity: numberToUSMoney(x.bought_quantity),
-            boughtPercent: x.bought_percent,
+            itemName: x.full_name,
+            price: `${numberToUSMoney(x.price)}z`,
+            minPrice: `${numberToUSMoney(x.price)}z`,
+            maxPrice: `${numberToUSMoney(x.price)}z`,
+            averageSellPrice: `${numberToUSMoney(x.price)}z`,
+            averageBuyPrice: `${numberToUSMoney(x.price)}z`,
+            purchasedUnits: `${numberToUSMoney(x.price)}z`,
+            soldUnits: `${numberToUSMoney(x.price)}z`,
+            userDiscordId: x.user_discord_id,
+            amount: numberToUSMoney(x.amount),
+            currentAmount: numberToUSMoney(x.current_amount),
         }
     });
 
-    const selling: ItemListingModel[] = data.selling.map((x) => {
-        return {
-            itemId: x.item_id,
-            itemName: x.item_name,
-            itemPrice: `${numberToUSMoney(x.item_price)}z`,
-            itemQuantity: numberToUSMoney(x.item_quantity),
-            shopName: x.shop_name,
-            shopCity: x.shop_city,
-            shopNavigation: x.shop_navigation,
-            playerName: x.player_name,
-            averageSellPrice: `${numberToUSMoney(x.average_sell_price)}z`,
-            averageSellPercent: x.average_sell_percent,
-            averageBuyPrice: `${numberToUSMoney(x.average_buy_price)}z`,
-            averageBuyPercent: x.average_buy_percent,
-            minPrice: `${numberToUSMoney(x.min_price)}z`,
-            maxPrice: `${numberToUSMoney(x.max_price)}z`,
-            soldQuantity: numberToUSMoney(x.sold_quantity),
-            soldPercent: x.sold_percent,
-            boughtQuantity: numberToUSMoney(x.bought_quantity),
-            boughtPercent: x.bought_percent,
-        }
-    });
-
-    const output = {
-        selling: selling,
-        buying: buying,
+    const output: ListingModel = {
+        items: items,
+        total: data.total,
+        page: data.page,
+        pageSize: data.page_size,
+        pages: data.pages,
     };
 
     return output;

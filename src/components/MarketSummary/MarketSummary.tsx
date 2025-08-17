@@ -95,15 +95,15 @@ const MarketComponent = ({
                                 <>
                                     <Box key={'shop-summary-online'} width="100%" display="flex" flexDirection="row" alignItems="center" justifyContent="space-between">
                                         <CustomTypography color={green[400]} variant="body2" component="div" sx={{ fontWeight: 700 }}>Online</CustomTypography>
-                                        <CustomTypography color={green[400]} variant="body2" component="div" sx={{ fontWeight: 700 }}>{model.marketSummaryData.onlineShops}</CustomTypography>
+                                        <CustomTypography color={green[400]} variant="body2" component="div" sx={{ fontWeight: 700 }}>{model.marketSummaryData.shops.online}</CustomTypography>
                                     </Box>
                                     <Box key={'shop-summary-offline'} width="100%" display="flex" flexDirection="row" alignItems="center" justifyContent="space-between">
                                         <CustomTypography color={red[200]} variant="body2" component="div" sx={{ fontWeight: 700 }}>Offline</CustomTypography>
-                                        <CustomTypography color={red[200]} variant="body2" component="div" sx={{ fontWeight: 700 }}>{model.marketSummaryData.offlineShops}</CustomTypography>
+                                        <CustomTypography color={red[200]} variant="body2" component="div" sx={{ fontWeight: 700 }}>{model.marketSummaryData.shops.offline}</CustomTypography>
                                     </Box>
                                     <Box key={'shop-summary-total'} width="100%" display="flex" flexDirection="row" alignItems="center" justifyContent="space-between">
                                         <CustomTypography color={blue[200]} variant="body2" component="div" sx={{ fontWeight: 700 }}>Total</CustomTypography>
-                                        <CustomTypography color={blue[200]} variant="body2" component="div" sx={{ fontWeight: 700 }}>{model.marketSummaryData.totalShops}</CustomTypography>
+                                        <CustomTypography color={blue[200]} variant="body2" component="div" sx={{ fontWeight: 700 }}>{model.marketSummaryData.shops.total}</CustomTypography>
                                     </Box>
                                 </>
                             )
@@ -131,15 +131,15 @@ const MarketComponent = ({
                                 <>
                                     <Box key={'transaction-summary-volume'} width="100%" display="flex" flexDirection="row" alignItems="center" justifyContent="space-between">
                                         <CustomTypography color={green[400]} variant="body2" component="div" sx={{ fontWeight: 700 }}>Total transaction volume</CustomTypography>
-                                        <CustomTypography color={green[400]} variant="body2" component="div" sx={{ fontWeight: 700 }}>{model.marketSummaryData.totalTransactionMoney}z</CustomTypography>
+                                        <CustomTypography color={green[400]} variant="body2" component="div" sx={{ fontWeight: 700 }}>{model.marketSummaryData.transactions.transactionVolume}z</CustomTypography>
                                     </Box>
                                     <Box key={'transaction-summary-taxed'} width="100%" display="flex" flexDirection="row" alignItems="center" justifyContent="space-between">
                                         <CustomTypography color={red[200]} variant="body2" component="div" sx={{ fontWeight: 700 }}>Total Taxed zeny</CustomTypography>
-                                        <CustomTypography color={red[200]} variant="body2" component="div" sx={{ fontWeight: 700 }}>{model.marketSummaryData.totalTransactionTax}z</CustomTypography>
+                                        <CustomTypography color={red[200]} variant="body2" component="div" sx={{ fontWeight: 700 }}>{model.marketSummaryData.transactions.taxedVolume}z</CustomTypography>
                                     </Box>
                                     <Box key={'transaction-summary-quantity'} width="100%" display="flex" flexDirection="row" alignItems="center" justifyContent="space-between">
                                         <CustomTypography color={blue[200]} variant="body2" component="div" sx={{ fontWeight: 700 }}>Total items transacted</CustomTypography>
-                                        <CustomTypography color={blue[200]} variant="body2" component="div" sx={{ fontWeight: 700 }}>{model.marketSummaryData.totalTransactionQuantity}</CustomTypography>
+                                        <CustomTypography color={blue[200]} variant="body2" component="div" sx={{ fontWeight: 700 }}>{model.marketSummaryData.transactions.transactionQuantity}</CustomTypography>
                                     </Box>
                                 </>
                             )
@@ -203,7 +203,7 @@ const MarketComponent = ({
                                                         {item.itemName}
                                                     </Box>
                                                     <Box component="span" sx={{ display: 'block' }}>
-                                                        {item.transactionQuantity} units in {item.transactionVolume} transactions
+                                                        {item.totalUnits} units in {item.transactionCount} transactions
                                                     </Box>
                                                 </Box>
 
@@ -273,7 +273,7 @@ const MarketComponent = ({
                                                         {item.itemName}
                                                     </Box>
                                                     <Box component="span" sx={{ display: 'block' }}>
-                                                        {item.transactionQuantity} units in {item.transactionVolume} transactions
+                                                        {item.totalUnits} units in {item.transactionCount} transactions
                                                     </Box>
                                                 </Box>
                                             </CustomTypography>
@@ -342,7 +342,7 @@ const MarketComponent = ({
                                                         {item.itemName}
                                                     </Box>
                                                     <Box component="span" sx={{ display: 'block' }}>
-                                                        {item.transactionQuantity} units listed {item.transactionVolume} times
+                                                        {item.totalUnits} units listed {item.transactionCount} times
                                                     </Box>
                                                 </Box>
                                             </CustomTypography>
@@ -397,13 +397,13 @@ const MarketComponent = ({
                                                             whiteSpace: 'nowrap',
                                                             display: 'inline-block',
                                                         }}
-                                                        title={`${player.playerName} (${player.playerId})`}
-                                                        onClick={() => handleRedirectRoPD(player.playerId)}
+                                                        title={`${player.playerName} (${player.accountId})`}
+                                                        onClick={() => handleRedirectRoPD(player.accountId)}
                                                     >
                                                         {player.playerName}
                                                     </Box>
                                                     <Box component="span" sx={{ display: 'block' }}>
-                                                        Earned {player.transactionMoney}z
+                                                        Earned {player.earnings}z
                                                     </Box>
                                                 </Box>
                                             </CustomTypography>
@@ -434,7 +434,7 @@ const MarketSummary = ({
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
     useEffect(() => {
-        if (endpoints !== undefined && endpoints.getMarketSummary !== undefined && endpoints.getMarketSummary.loading) {
+        if (endpoints?.getMarketSummary?.loading) {
             setIsLoading(true);
         }
         else {

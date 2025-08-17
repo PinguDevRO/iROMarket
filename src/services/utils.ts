@@ -81,6 +81,34 @@ export const AxiosPost = async <T = unknown>(
     });
 };
 
+export const AxiosImage = async (
+    url: string,
+    body: Record<string, unknown> = {}
+): Promise<string | null> => {
+    const options = (): AxiosRequestConfig => {
+        return {
+            headers: {
+                "Content-Type": "application/vnd.api+json",
+            },
+            validateStatus: () => true,
+            timeout: 60000,
+            responseType: "blob",
+        };
+    };
+    return await axios
+    .post(url, body, options())
+    .then((response) => {
+        return response.data;
+    })
+    .then((blob: Blob) => {
+        const objectURL = URL.createObjectURL(blob);
+        return objectURL;
+    })
+    .catch(() => {
+        return null;
+    });
+};
+
 const getHeaders = (): Partial<RawAxiosRequestHeaders> => {
     return {
         "Content-Type": "application/json",

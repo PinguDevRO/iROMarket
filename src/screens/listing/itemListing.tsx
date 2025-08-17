@@ -12,7 +12,7 @@ import {
 import Box from "@mui/material/Box";
 import ItemTable from "@/components/Tables/ListingTable/ListingTable";
 import Loading from "@/components/Loading/Loading";
-import SearchBar from "@/components/SearchBar/SearchBar";
+import ListingSearchBar from "@/components/SearchBar/ListingSearchBar";
 import ServerSelector from "@/components/ServerSelector/ServerSelector";
 import ToggleTable from "@/components/ToggleTable/ToggleTable";
 
@@ -54,7 +54,7 @@ const ItemListingScreen = ({
                         width: '100%',
                     }}
                 >
-                    <SearchBar />
+                    <ListingSearchBar />
                     <ServerSelector />
                 </Box>
                 <ToggleTable />
@@ -64,9 +64,9 @@ const ItemListingScreen = ({
             ) : (
                 <Box sx={{ flex: 1, minHeight: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 4 }}>
                     {selectedToggleTable === 'vending' ? (
-                        <ItemTable title="Vending" data={model?.itemListingData?.selling} />
+                        <ItemTable title="Vending" data={model?.itemListingData} />
                     ) : selectedToggleTable === 'buying' ? (
-                        <ItemTable title="Buying" data={model?.itemListingData?.buying} />
+                        <ItemTable title="Buying" data={model?.itemListingData} />
                     ) : (
                         <></>
                     )}
