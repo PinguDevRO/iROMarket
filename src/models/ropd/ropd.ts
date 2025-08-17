@@ -10,7 +10,7 @@ export interface ROPDModel {
 };
 
 export interface PlayerModel {
-    discordId: string;
+    discordId: number | null;
     accountId: number;
     name: string;
     level: number;
@@ -26,7 +26,7 @@ const ROPDToModel = (data: ROPDResponse): ROPDModel => {
     const players: PlayerModel[] = [];
     for(const player of data.players){
         players.push({
-            discordId: player.discord_id ? player.discord_id.toString() : 'Unknown',
+            discordId: player.discord_id,
             accountId: player.account_id,
             name: player.name,
             level: player.level,

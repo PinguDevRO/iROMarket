@@ -16,7 +16,7 @@ import ItemTooptip, { FormatPercentColor } from "../../ItemTooltip/ItemTooltip";
 import ImageTooptip from "@/components/ImageTooltip/ImageTooltip";
 import { ListingModel } from "@/models/listing/item-listing";
 import { ImgWrapper } from "@/utils/component_utils";
-import { isNumeric } from "@/utils/string_utils";
+import { isNumeric, capitalizeStr } from "@/utils/string_utils";
 import { COLORS } from '@/theme/colors';
 import { useStore } from "@/store/useStore";
 
@@ -209,7 +209,7 @@ const ItemTable = ({
                                                 title={`/navi ${row.mapName} ${row.xCoordinate}/${row.yCoordinate}`}
                                                 onClick={(el) => copyToClipboard(el)}
                                             >
-                                                {row.mapName}
+                                                {capitalizeStr(row.mapName)}
                                             </span>
                                         </TableCell>
                                     </TableRow>

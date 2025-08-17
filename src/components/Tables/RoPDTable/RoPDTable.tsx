@@ -15,10 +15,26 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import { get_jobname_by_id } from "@/constants/joblist";
 import { CustomTypography } from "@/utils/component_utils";
-import { isNumeric } from "@/utils/string_utils";
+import { isNumeric, capitalizeStr } from "@/utils/string_utils";
 import { ROPDModel } from "@/models/ropd/ropd";
 import { COLORS } from '@/theme/colors';
 import { useStore } from "@/store/useStore";
+
+
+const copyToClipboard = (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
+    const span = event.currentTarget;
+    const textToCopy = span.title;
+    const originalText = span.innerText;
+
+    navigator.clipboard.writeText(textToCopy).then(() => {
+        span.innerText = 'Copied!';
+        setTimeout(() => {
+            if (document.body.contains(span)) {
+                span.innerText = originalText;
+            }
+        }, 500);
+    });
+};
 
 
 const RoPDTable = ({
@@ -40,7 +56,7 @@ const RoPDTable = ({
         "Job",
         "Level",
         "Guild",
-        "Discord ID",
+        "Seen at",
         "Last Seen"
     ];
 
@@ -144,13 +160,18 @@ const RoPDTable = ({
                                         </CustomTypography>
                                     </TableCell>
                                     <TableCell
-                                        key={`player-row-discord-${row.accountId}-${idx}`}
+                                        key={`item-row-seen-at-${row.accountId}-${idx}`}
                                         sx={{ color: COLORS.third_background_text }}
                                         align="center"
                                     >
-                                        <CustomTypography variant="body2" component="div">
-                                            {row.discordId}
-                                        </CustomTypography>
+                                        <span
+                                            className="hover:underline cursor-pointer"
+                                            style={{ color: COLORS.internal_link_text }}
+                                            title={`/navi ${row.lastMapSeen} ${row.lastPositionX}/${row.lastPositionY}`}
+                                            onClick={(el) => copyToClipboard(el)}
+                                        >
+                                            {capitalizeStr(row.lastMapSeen)}
+                                        </span>
                                     </TableCell>
                                     <TableCell
                                         key={`player-row-lastseen-${row.accountId}-${idx}`}

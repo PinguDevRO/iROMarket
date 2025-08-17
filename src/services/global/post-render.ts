@@ -1,4 +1,4 @@
-import { AxiosImage } from "./utils";
+import { AxiosImage } from "../utils";
 
 export interface CharacterData {
     gender: number;

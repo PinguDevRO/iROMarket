@@ -20,7 +20,7 @@ import { ImgWrapper } from "@/utils/component_utils";
 import { COLORS } from '@/theme/colors';
 import { ListingModel } from "@/models/listing/item-listing";
 import { CustomTypography } from "@/utils/component_utils";
-import { isNumeric } from "@/utils/string_utils";
+import { isNumeric, capitalizeStr } from "@/utils/string_utils";
 import { useStore } from "@/store/useStore";
 
 
@@ -225,7 +225,7 @@ const SummaryTable = ({
                                             title={`/navi ${row.mapName} ${row.xCoordinate}/${row.yCoordinate}`}
                                             onClick={(el) => copyToClipboard(el)}
                                         >
-                                            {row.mapName}
+                                            {capitalizeStr(row.mapName)}
                                         </span>
                                     </TableCell>
                                 </TableRow>
