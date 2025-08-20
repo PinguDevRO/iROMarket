@@ -35,15 +35,16 @@ export interface ItemResponse {
 
 const GetItemListing = async (server: string, kind: string, page: number, page_size: number, itemName?: string, itemId?: number): Promise<ListingResponse> => {
     const url = process.env.NEXT_PUBLIC_MARKET_API_URL ? process.env.NEXT_PUBLIC_MARKET_API_URL : "";
+    const api_key = process.env.NEXT_PUBLIC_MARKET_API_KEY ? process.env.NEXT_PUBLIC_MARKET_API_KEY : "";
     if(itemName !== undefined && itemName.length > 0){
-        const response: AxiosResponse<ListingResponse> = await AxiosGet(`${url}/market/listing?server=${server}&q=${itemName}&t=${kind}&page=${page + 1}&page_size=${page_size}`);
+        const response: AxiosResponse<ListingResponse> = await AxiosGet(`${url}/market/listing?server=${server}&q=${itemName}&t=${kind}&page=${page + 1}&page_size=${page_size}&api_key=${api_key}`);
         return response.data;
     }
     if(itemId !== undefined){
-        const response: AxiosResponse<ListingResponse> = await AxiosGet(`${url}/market/listing?server=${server}&id=${itemId}&t=${kind}&page=${page + 1}&page_size=${page_size}`);
+        const response: AxiosResponse<ListingResponse> = await AxiosGet(`${url}/market/listing?server=${server}&id=${itemId}&t=${kind}&page=${page + 1}&page_size=${page_size}&api_key=${api_key}`);
         return response.data;
     }
-    const response: AxiosResponse<ListingResponse> = await AxiosGet(`${url}/market/listing?server=${server}&t=${kind}&page=${page + 1}&page_size=${page_size}`);
+    const response: AxiosResponse<ListingResponse> = await AxiosGet(`${url}/market/listing?server=${server}&t=${kind}&page=${page + 1}&page_size=${page_size}&api_key=${api_key}`);
     return response.data;
 };
 

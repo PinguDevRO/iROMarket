@@ -38,7 +38,8 @@ export interface GetEarnersResponse {
 
 const GetMarketSummary = async (): Promise<GetMarketSummaryResponse> => {
     const url = process.env.NEXT_PUBLIC_MARKET_API_URL ? process.env.NEXT_PUBLIC_MARKET_API_URL : "";
-    const response: AxiosResponse<GetMarketSummaryResponse> = await AxiosGet(`${url}/summary`);
+    const api_key = process.env.NEXT_PUBLIC_MARKET_API_KEY ? process.env.NEXT_PUBLIC_MARKET_API_KEY : "";
+    const response: AxiosResponse<GetMarketSummaryResponse> = await AxiosGet(`${url}/summary?api_key=${api_key}`);
     return response.data;
 };
 
