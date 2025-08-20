@@ -111,7 +111,7 @@ const ItemTable = ({
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {data !== undefined ? (
+                        {data !== undefined && data.items && data.items.length > 0 ? (
                             data.items.map((row, idx) => (
                                     <TableRow hover key={`item-row-${row.itemId}-${idx}`}>
                                         <TableCell

@@ -2,17 +2,12 @@
 
 import { 
     useEffect,
-    useRef,
     useState
 } from "react";
-import {
-    useSearchParams
-} from "next/navigation";
-import ListingSummaryToModel, {
-    ListingSummaryModel
-} from "@/models/global/listing-summary";
+import { useStore, ItemSaleKind } from "@/store/useStore";
+import ItemHistoryToModel, { ListingModel } from "@/models/history/item-history";
 
-import GetListingSummary from "@/services/global/listing-summary";
+import GetItemHistory from "@/services/history/item-history";
 
 import ItemHistoryScreen from "@/screens/history/ItemHistory";
 
@@ -21,41 +16,21 @@ export interface EndpointStatus {
     error: boolean;
 };
 
-export type EndpointName = "getListingSummary" | "";
+export type EndpointName = "getItemHistory" | "";
 
 export interface Model {
-    listingSummaryData: ListingSummaryModel | undefined;
+    itemHistoryData: ListingModel | undefined;
     lastUpdate: Date | undefined;
 };
 
 const ItemHistoryController = () => {
-    const searchParams = useSearchParams();
-    const searchQueryRef = useRef<string>('');
-    const searchServerRef = useRef<string>('');
-    const toggleTableRef = useRef<string>('');
+    const page = useStore((x) => x.page);
+    const pageSize = useStore((x) => x.page_size);
+    const server = useStore((x) => x.server);
+    const saleKind = useStore((x) => x.item_sale_kind);
+    const searchQuery = useStore((x) => x.search_query);
     const [model, setModel] = useState<Partial<Model>>();
     const [endpoints, setEndpoints] = useState<Partial<Record<EndpointName, EndpointStatus>>>();
-
-    useEffect(() => {
-        const queryInput = searchParams.get('q');
-        const tobbleTableInput = searchParams.get('t');
-        const serverInput = searchParams.get('server');
-        if(queryInput !== undefined && typeof queryInput === 'string'){
-            searchQueryRef.current = queryInput;
-        }
-
-        if(tobbleTableInput !== undefined && typeof tobbleTableInput === 'string'){
-            toggleTableRef.current = tobbleTableInput;
-        }
-
-        if(serverInput !== undefined && typeof serverInput === 'string'){
-            searchServerRef.current = serverInput;
-        }
-
-        if(searchServerRef.current.length > 0){
-            handleOnSearch(searchServerRef.current, searchQueryRef.current);
-        }
-    }, [searchParams]);
 
     useEffect(() => {
         refreshAllData();
@@ -66,14 +41,12 @@ const ItemHistoryController = () => {
         return () => clearInterval(interval);
     }, []);
 
-    const refreshAllData = async () => {
-        if(searchServerRef.current.length > 0){
-            await loadListingSummary(searchServerRef.current, searchQueryRef.current);
-        }
-    };
+    useEffect(() => {
+        refreshAllData();
+    }, [saleKind, server, page, pageSize, searchQuery]);
 
-    const handleOnSearch = async (server: string, query: string): Promise<void> => {
-        await loadListingSummary(server, query);
+    const refreshAllData = async () => {
+        await loadItemHistory(server, saleKind, page, pageSize, searchQuery, undefined);
     };
 
     const updateModel = (partialModel: | Partial<Model> | ((model: Partial<Model> | undefined) => Partial<Model>)) => {
@@ -115,16 +88,16 @@ const ItemHistoryController = () => {
         },
     });
 
-    const loadListingSummary = async (server: string, query: string) => {
-        const statusEndpoint = buildStatusEndpoint("getListingSummary");
+    const loadItemHistory = async (server: string, kind: ItemSaleKind, page: number, page_size: number, itemName?: string, itemId?: number) => {
+        const statusEndpoint = buildStatusEndpoint("getItemHistory");
         try {
             statusEndpoint.loading();
-            const response = await GetListingSummary(server, query);
-            const listingSummaryData = ListingSummaryToModel(response);
-            updateModel({ listingSummaryData });
+            const response = await GetItemHistory(server, kind, page, page_size, itemName, itemId);
+            const itemHistoryData = ItemHistoryToModel(response);
+            updateModel({ itemHistoryData });
         } catch {
             statusEndpoint.error();
-            updateModel({ listingSummaryData: undefined });
+            updateModel({ itemHistoryData: undefined });
         } finally {
             statusEndpoint.done();
         }
@@ -134,8 +107,8 @@ const ItemHistoryController = () => {
         <ItemHistoryScreen
             model={model}
             endpoints={endpoints}
-            searchQuery={searchQueryRef.current}
-            selectedToggleTable={toggleTableRef.current}
+            searchQuery={searchQuery}
+            selectedToggleTable={saleKind}
         />
     )
 }

@@ -36,7 +36,7 @@ const RoPDByIdController = ({
 
     useEffect(() => {
         refreshAllData(accountIdQuery);
-    }, [accountIdQuery]);
+    }, [server, page, pageSize, accountIdQuery]);
 
     const refreshAllData = async (accountId: number) => {
         if (accountId > 0) {

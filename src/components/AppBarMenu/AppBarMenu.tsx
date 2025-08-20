@@ -1,9 +1,6 @@
 'use client';
 
 import {
-  useState
-} from 'react';
-import {
   useRouter,
   useSearchParams
 } from 'next/navigation';
@@ -17,15 +14,12 @@ import Image from "next/image";
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
-import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import IconButton from '@mui/material/IconButton';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import Skeleton from '@mui/material/Skeleton';
 import CircleIcon from '@mui/icons-material/Circle';
 import WarningIcon from '@mui/icons-material/Warning';
+import MenuList from './MenuList';
 import { CustomTypography } from "@/utils/component_utils";
 import { red, orange, green, yellow } from '@mui/material/colors';
 import { COLORS } from '@/theme/colors';
@@ -82,15 +76,21 @@ const ServerStatus = ({
       flexDirection={{ xs: "column", md: "row" }}
       alignItems="center"
       justifyContent="end"
-      gap={2}
+      gap={{ xs: 1, md: 4 }}
       paddingBottom={{ xs: 2, md: 0 }}
     >
-      <Box flexGrow={1} display="flex" flexDirection="row" alignItems="center" justifyContent="center" gap={2} paddingX={4}>
+      <Box flexGrow={1} display="flex" flexDirection="row" alignItems="center" justifyContent="center" gap={2}>
         {endpoints !== undefined && endpoints.getServerStatus !== undefined && endpoints.getServerStatus.loading ? (
           <Skeleton width="100%" animation="wave" />
         ) : (
           model !== undefined && model.serverStatusData !== undefined && model.serverStatusData.globalStatus.map((x, idx) => (
-            <Box key={'global-status-' + idx} display="flex" flexDirection="row" alignItems="center" gap={0.5}>
+            <Box
+              key={'global-status-' + idx}
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              gap={1}
+            >
               <CircleIcon sx={{ color: GetStatusColor(x) }} />
               {x.name === 'Zone' ? (
                 <CustomTypography
@@ -127,7 +127,7 @@ const ServerStatus = ({
           ))
         )}
       </Box>
-      <Box flexGrow={1} display="flex" flexDirection="row" alignItems="center" justifyContent="center" gap={2} paddingX={4}>
+      <Box flexGrow={1} display="flex" flexDirection="row" alignItems="center" justifyContent="center" gap={2}>
         {endpoints !== undefined && endpoints.getServerStatus !== undefined && endpoints.getServerStatus.loading ? (
           <>
             <Box key={'total-players-value'} flexGrow={1} display="flex" flexDirection="column" alignItems="center" justifyContent="center" gap={0.5}>
@@ -304,6 +304,42 @@ const ServerStatus = ({
           <></>
         )}
       </Box>
+      <Box flexGrow={1} display="flex" flexDirection="row" alignItems="center" justifyContent="center" gap={2}>
+        {endpoints !== undefined && endpoints.getServerStatus !== undefined && endpoints.getServerStatus.loading ? (
+          <Skeleton width="100%" animation="wave" />
+        ) : (
+          <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" gap={0.5} >
+            <CustomTypography
+              color={COLORS.internal_link_text}
+              variant="body2"
+              component="div"
+              sx={{
+                flexGrow: 1,
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                fontWeight: 700,
+              }}
+            >
+              Server Time (PDT/PST)
+            </CustomTypography>
+            <CustomTypography
+              color={COLORS.third_background_text}
+              variant="caption"
+              component="div"
+              sx={{
+                flexGrow: 1,
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                fontWeight: 700,
+              }}
+            >
+              {model !== undefined && model.serverStatusData !== undefined && model.serverStatusData.lastUpdate ? model.serverStatusData.lastUpdateServerTime : ''}
+            </CustomTypography>
+          </Box>
+        )}
+      </Box>
     </Box>
   )
 };
@@ -319,18 +355,8 @@ const AppBarMenu = ({
   const router = useRouter();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams.toString());
-  const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
-
-  const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElNav(event.currentTarget);
-  };
-
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
-  };
 
   const redirectTo = (url: string) => {
-    setAnchorElNav(null);
     router.push(url);
   };
 
@@ -344,8 +370,8 @@ const AppBarMenu = ({
             flexDirection={{ xs: 'column', md: 'row' }}
             alignItems={{ xs: 'stretch', md: 'center' }}
             justifyContent="space-between"
-            gap={2}
-            paddingTop={{ xs: 2, md: 0 }}
+            gap={1}
+            paddingTop={{ xs: 1, md: 0 }}
             position="relative"
           >
             <Box
@@ -358,6 +384,10 @@ const AppBarMenu = ({
                 xs: 'center',
                 md: 'flex-start',
               }}
+              gap={{
+                xs: 0,
+                md: 2,
+              }}
             >
               <Image
                 src="/logo_loop.png"
@@ -366,75 +396,7 @@ const AppBarMenu = ({
                 height={63}
                 draggable={false}
               />
-              <Box
-                sx={{
-                  display: { xs: 'flex', md: 'none' },
-                  position: 'absolute',
-                  top: 0,
-                  right: 0,
-                  padding: 1,
-                }}
-              >
-                <IconButton
-                  size="large"
-                  aria-label="mobile-menu"
-                  aria-controls="menu-appbar"
-                  aria-haspopup="true"
-                  onClick={handleOpenNavMenu}
-                  color="inherit"
-                >
-                  <MenuIcon />
-                </IconButton>
-              </Box>
-              <Menu
-                id="menu-appbar"
-                anchorEl={anchorElNav}
-                anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'left',
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'left',
-                }}
-                open={Boolean(anchorElNav)}
-                onClose={handleCloseNavMenu}
-                sx={{
-                  display: { xs: 'block', md: 'none' },
-                }}
-                slotProps={{
-                  paper: {
-                    sx: {
-                      backgroundColor: COLORS.primary_background,
-                    },
-                  },
-                }}
-              >
-                {pages.map((page, idx) => (
-                  <MenuItem
-                    key={page.name + '-' + idx}
-                    onClick={() => redirectTo(`${page.url}?${params.toString()}`)}
-                    sx={{ background: COLORS.primary_background }}
-                  >
-                    <CustomTypography
-                      color={COLORS.third_background_text}
-                      variant="subtitle1"
-                      component="div"
-                      sx={{
-                        display: 'flex',
-                        fontFamily: 'monospace',
-                        fontWeight: 700,
-                        letterSpacing: '.2rem',
-                        textDecoration: 'none',
-                      }}
-                    >
-                      {page.name}
-                    </CustomTypography>
-                  </MenuItem>
-                ))}
-              </Menu>
-              <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, gap: 2, marginLeft: 2 }}>
+              <Box sx={{ display: 'flex', gap: 2 }}>
                 {pages.map((page, idx) => (
                   <Button
                     key={page.name + '-' + idx}
@@ -464,6 +426,7 @@ const AppBarMenu = ({
                   </Button>
                 ))}
               </Box>
+              <MenuList />
             </Box>
             <ServerStatus model={model} endpoints={endpoints} />
           </Box>

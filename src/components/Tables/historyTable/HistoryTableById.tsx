@@ -3,9 +3,6 @@
 import {
     ChangeEvent
 } from "react";
-import {
-    useSearchParams
-} from "next/navigation";
 import Image from "next/image";
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
@@ -26,15 +23,13 @@ import { COLORS } from '@/theme/colors';
 import { useStore } from "@/store/useStore";
 
 
-const HistoryTable = ({
+const HistoryTableById = ({
     title,
     data,
 }: {
     title: string;
     data: ListingModel | undefined;
 }) => {
-    const searchParams = useSearchParams();
-    const params = new URLSearchParams(searchParams.toString());
     const page = useStore((x) => x.page);
     const pageSize = useStore((x) => x.page_size);
     const saleKind = useStore((x) => x.item_sale_kind);
@@ -46,7 +41,8 @@ const HistoryTable = ({
         "Quantity",
         "Min Price",
         "Price",
-        "Max Price"
+        "Max Price",
+        "Transaction Date",
     ];
 
     const handleChangePage = (event: unknown, newPage: number) => {
@@ -78,11 +74,12 @@ const HistoryTable = ({
             >
                 <Table stickyHeader aria-label="sticky table">
                     <colgroup>
-                        <col style={{ width: '42.857%' }} />
-                        <col style={{ width: '14.286%' }} />
-                        <col style={{ width: '14.286%' }} />
-                        <col style={{ width: '14.286%' }} />
-                        <col style={{ width: '14.286%' }} />
+                        <col style={{ width: '37.5%' }} />
+                        <col style={{ width: '12.5%' }} />
+                        <col style={{ width: '12.5%' }} />
+                        <col style={{ width: '12.5%' }} />
+                        <col style={{ width: '12.5%' }} />
+                        <col style={{ width: '12.5%' }} />
                     </colgroup>
                     <TableHead>
                         <TableRow>
@@ -122,14 +119,14 @@ const HistoryTable = ({
                                                     />
                                                 </ImgWrapper>
                                                 <a
-                                                    className="hover:underline cursor-pointer"
-                                                    href={`/history/${row.itemId}?${params.toString()}`}
-                                                    target="_self"
+                                                    href={`https://www.divine-pride.net/database/item/${row.itemId}`}
+                                                    target="_blank"
                                                     rel="noopener noreferrer"
                                                     style={{
                                                         textDecoration: "none",
                                                         fontSize: "14px",
-                                                        color: COLORS.internal_link_text
+                                                        lineHeight: 1.2,
+                                                        color: COLORS.third_background_text,
                                                     }}
                                                 >
                                                     {row.name}
@@ -183,6 +180,15 @@ const HistoryTable = ({
                                     >
                                         <CustomTypography variant="body2" component="div">
                                             {row.maxPrice}
+                                        </CustomTypography>
+                                    </TableCell>
+                                    <TableCell
+                                        key={`item-row-transaction-date-${row.itemId}-${idx}`}
+                                        sx={{ color: COLORS.third_background_text }}
+                                        align="center"
+                                    >
+                                        <CustomTypography variant="body2" component="div">
+                                            {row.date}
                                         </CustomTypography>
                                     </TableCell>
                                 </TableRow>
@@ -239,4 +245,4 @@ const HistoryTable = ({
     );
 }
 
-export default HistoryTable;
+export default HistoryTableById;

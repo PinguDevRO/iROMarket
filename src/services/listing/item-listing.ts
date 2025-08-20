@@ -21,9 +21,13 @@ export interface ItemResponse {
     min_price: number;
     max_price: number;
     average_sell_price: number;
+    avg_sell_price_growth: number;
     average_buy_price: number;
+    avg_buy_price_growth: number;
     purchased_units: number;
+    purchased_units_growth: number;
     sold_units: number;
+    sold_units_growth: number;
     user_discord_id: number | null;
     amount: number;
     current_amount: number;

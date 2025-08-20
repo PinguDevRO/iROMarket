@@ -1,6 +1,5 @@
 import { stringify } from "qs";
-import axios, { AxiosInstance, AxiosRequestConfig, RawAxiosRequestHeaders } from "axios";
-import MockApi from "./mockapi";
+import axios, { AxiosRequestConfig, RawAxiosRequestHeaders } from "axios";
 
 export interface AxiosResponse<T> {
     data: T;
@@ -19,10 +18,6 @@ export const getOnSessionStorage = (key: string) => {
     return JSON.parse(sessionStorage.getItem(key) as string) || null;
 };
 
-const connectAxios = (axios: AxiosInstance): AxiosInstance => {
-    return MockApi(axios, true);
-};
-
 export const AxiosGet = async <T = unknown>(
     url: string,
     params: Record<string, unknown> = {}
@@ -37,7 +32,7 @@ export const AxiosGet = async <T = unknown>(
         };
     };
 
-    return await connectAxios(axios)
+    return await axios
     .get(url, options())
     .then((response) => {
         return {
@@ -65,7 +60,7 @@ export const AxiosPost = async <T = unknown>(
         };
     };
 
-    return await connectAxios(axios)
+    return await axios
     .post(url, body, options())
     .then((response) => {
         return {

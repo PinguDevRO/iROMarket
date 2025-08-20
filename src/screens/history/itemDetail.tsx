@@ -10,9 +10,9 @@ import {
     Model
 } from '@/controllers/history/itemDetail';
 import Box from "@mui/material/Box";
-import HistoryTable from "@/components/Tables/historyTable/HistoryTable";
+import HistoryTableById from "@/components/Tables/historyTable/HistoryTableById";
 import Loading from "@/components/Loading/Loading";
-import SearchBar from "@/components/SearchBar/SearchBar";
+import HistorySearchBar from "@/components/SearchBar/HistorySearchBar";
 import ServerSelector from "@/components/ServerSelector/ServerSelector";
 import ToggleTable from "@/components/ToggleTable/ToggleTable";
 
@@ -28,7 +28,7 @@ const ItemDetailScreen = ({
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
     useEffect(() => {
-        if (endpoints !== undefined && endpoints.getItemDetail !== undefined && endpoints.getItemDetail.loading) {
+        if (endpoints !== undefined && endpoints.getItemHistory !== undefined && endpoints.getItemHistory.loading) {
             setIsLoading(true);
         }
         else {
@@ -54,7 +54,7 @@ const ItemDetailScreen = ({
                         width: '100%',
                     }}
                 >
-                    <SearchBar />
+                    <HistorySearchBar />
                     <ServerSelector />
                 </Box>
                 <ToggleTable />
@@ -64,9 +64,9 @@ const ItemDetailScreen = ({
             ) : (
                 <Box sx={{ flex: 1, minHeight: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 4 }}>
                     {selectedToggleTable === 'vending' ? (
-                        <HistoryTable title="Vending History" data={model?.itemDetailData?.selling} />
+                        <HistoryTableById title="Vending History" data={model?.itemHistoryData} />
                     ) : selectedToggleTable === 'buying' ? (
-                        <HistoryTable title="Buying History" data={model?.itemDetailData?.buying} />
+                        <HistoryTableById title="Buying History" data={model?.itemHistoryData} />
                     ) : (
                         <></>
                     )}

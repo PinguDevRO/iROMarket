@@ -1,5 +1,6 @@
-import { ListingResponse } from "@/services/listing/item-listing";
+import { ListingResponse } from "@/services/history/item-history";
 import { numberToUSMoney } from "@/utils/string_utils";
+import { formatOnlyDate } from "@/utils/date_utils";
 
 export interface ListingModel {
     items: ItemModel[];
@@ -10,15 +11,10 @@ export interface ListingModel {
 };
 
 export interface ItemModel {
-    accountId: number;
-    name: string;
-    ownerName: string;
-    mapName: string;
-    xCoordinate: number;
-    yCoordinate: number;
     itemId: number;
-    itemName: string;
+    name: string;
     price: string;
+    date: string | null;
     minPrice: string;
     maxPrice: string;
     averageSellPrice: string;
@@ -29,22 +25,16 @@ export interface ItemModel {
     purchasedUnitsGrowth: number;
     soldUnits: string;
     soldUnitsGrowth: number;
-    userDiscordId: number | null;
     amount: string;
-    currentAmount: string;
 };
 
-const ItemListingToModel = (data: ListingResponse): ListingModel => {
-    const items: ItemModel[] = data.items.map((x) => {
-        return {
-            accountId: x.account_id,
-            name: x.name,
-            ownerName: x.owner_name,
-            mapName: x.map_name,
-            xCoordinate: x.x_coordinate,
-            yCoordinate: x.y_coordinate,
+const ItemHistoryToModel = (data: ListingResponse): ListingModel => {
+    const items: ItemModel[] = [];
+    for (const x of data.items) {
+        items.push({
             itemId: x.item_id,
-            itemName: x.full_name,
+            name: x.name,
+            date: x.date !== null ? formatOnlyDate(x.date) : null,
             price: `${numberToUSMoney(x.price)}z`,
             minPrice: `${numberToUSMoney(x.min_price)}z`,
             maxPrice: `${numberToUSMoney(x.max_price)}z`,
@@ -56,21 +46,17 @@ const ItemListingToModel = (data: ListingResponse): ListingModel => {
             purchasedUnitsGrowth: x.purchased_units_growth,
             soldUnits: numberToUSMoney(x.sold_units),
             soldUnitsGrowth: x.sold_units_growth,
-            userDiscordId: x.user_discord_id,
             amount: numberToUSMoney(x.amount),
-            currentAmount: numberToUSMoney(x.current_amount),
-        }
-    });
+        })
+    }
 
-    const output: ListingModel = {
+    return {
         items: items,
         total: data.total,
         page: data.page,
         pageSize: data.page_size,
         pages: data.pages,
-    };
-
-    return output;
+    }
 };
 
-export default ItemListingToModel;
+export default ItemHistoryToModel;

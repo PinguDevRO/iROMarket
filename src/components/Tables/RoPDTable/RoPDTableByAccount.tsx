@@ -151,7 +151,7 @@ const RoPDTableByAccount = ({
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {data !== undefined ? (
+                        {data !== undefined && data.players && data.players.length > 0 ? (
                             data.players.map((row, idx) => (
                                 <TableRow hover key={`player-row-${row.accountId}-${idx}`}>
                                     <TableCell

@@ -12,7 +12,7 @@ import {
 import Box from "@mui/material/Box";
 import RoPDTableByAccount from "@/components/Tables/RoPDTable/RoPDTableByAccount";
 import Loading from "@/components/Loading/Loading";
-import RopdSearchBar from "@/components/SearchBar/ropdSearchBar";
+import RopdSearchBar from "@/components/SearchBar/RopdSearchBar";
 import ServerSelector from "@/components/ServerSelector/ServerSelector";
 
 const RoPDByIdScreen = ({

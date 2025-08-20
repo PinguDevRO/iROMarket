@@ -10,9 +10,9 @@ import {
     Model
 } from '@/controllers/history/itemHistory';
 import Box from "@mui/material/Box";
-import SummaryHistoryTable from "@/components/Tables/SummaryHistoryTable/SummaryHistoryTable";
+import HistoryTable from "@/components/Tables/historyTable/HistoryTable";
 import Loading from "@/components/Loading/Loading";
-import SearchBar from "@/components/SearchBar/SearchBar";
+import HistorySearchBar from "@/components/SearchBar/HistorySearchBar";
 import ServerSelector from "@/components/ServerSelector/ServerSelector";
 import ToggleTable from "@/components/ToggleTable/ToggleTable";
 
@@ -30,7 +30,7 @@ const ItemHistoryScreen = ({
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
     useEffect(() => {
-        if (endpoints !== undefined && endpoints.getListingSummary !== undefined && endpoints.getListingSummary.loading) {
+        if (endpoints !== undefined && endpoints.getItemHistory !== undefined && endpoints.getItemHistory.loading) {
             setIsLoading(true);
         }
         else {
@@ -56,7 +56,7 @@ const ItemHistoryScreen = ({
                         width: '100%',
                     }}
                 >
-                    <SearchBar searchInput={searchQuery} />
+                    <HistorySearchBar searchInput={searchQuery} />
                     <ServerSelector />
                 </Box>
                 <ToggleTable />
@@ -66,9 +66,9 @@ const ItemHistoryScreen = ({
             ) : (
                 <Box sx={{ flex: 1, minHeight: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 4 }}>
                     {selectedToggleTable === 'vending' ? (
-                        <SummaryHistoryTable title="Vending History" data={model?.listingSummaryData?.selling} />
+                        <HistoryTable title="Vending History" data={model?.itemHistoryData} />
                     ) : selectedToggleTable === 'buying' ? (
-                        <SummaryHistoryTable title="Buying History" data={model?.listingSummaryData?.buying} />
+                        <HistoryTable title="Buying History" data={model?.itemHistoryData} />
                     ) : (
                         <></>
                     )}

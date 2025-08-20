@@ -2,20 +2,18 @@ import { ReactElement } from 'react';
 import Box from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
 import { red, green } from '@mui/material/colors';
-import { ItemListingModel as ItemModel } from '@/models/listing/item-listing';
-import { ItemListingModel as SummaryModel } from '@/models/global/listing-summary';
-import { ItemListingModel as HistoryModel } from "@/models/history/item-detail";
+import { ItemModel as ItemModel } from '@/models/listing/item-listing';
+import { ItemModel as HistoryModel } from "@/models/history/item-history";
 import { CustomTypography } from '@/utils/component_utils';
 import { COLORS } from '@/theme/colors';
-
-type ItemType = "vending" | "buying";
+import { ItemSaleKind } from '@/store/useStore';
 
 export const FormatPercentColor = ({
     value,
     type,
 } : {
     value: number;
-    type: ItemType;
+    type: ItemSaleKind;
 }) => {
     if(type === 'buying' && value > 0){
         return <CustomTypography color={red[400]} variant="body2" component="div" fontWeight="bold">+{value}%</CustomTypography>
@@ -39,8 +37,8 @@ const ItemTooptip = ({
     type,
     children
 }: {
-    data: ItemModel | SummaryModel | HistoryModel;
-    type: ItemType;
+    data: ItemModel | HistoryModel;
+    type: ItemSaleKind;
     children: ReactElement;
 }) => {
     return (
@@ -60,12 +58,12 @@ const ItemTooptip = ({
                     <Box width="100%" display="flex" flexDirection="row" alignItems="center" justifyContent="start">
                         <CustomTypography color={COLORS.third_background_text} variant="caption" component="div">Average Sell Price:&nbsp;</CustomTypography>
                         <CustomTypography color={COLORS.third_background_text} variant="caption" component="div" fontWeight="bold">{data.averageSellPrice}&nbsp;</CustomTypography>
-                        <FormatPercentColor value={data.averageSellPercent} type={type} />
+                        <FormatPercentColor value={data.avgSellPriceGrowth} type={type} />
                     </Box>
                     <Box width="100%" display="flex" flexDirection="row" alignItems="center" justifyContent="start">
                         <CustomTypography color={COLORS.third_background_text} variant="caption" component="div">Average Buy Price:&nbsp;</CustomTypography>
                         <CustomTypography color={COLORS.third_background_text} variant="caption" component="div" fontWeight="bold">{data.averageBuyPrice}&nbsp;</CustomTypography>
-                        <FormatPercentColor value={data.averageBuyPercent} type={type} />
+                        <FormatPercentColor value={data.avgBuyPriceGrowth} type={type} />
                     </Box>
                     <Box width="100%" display="flex" flexDirection="row" alignItems="center" justifyContent="start">
                         <CustomTypography color={COLORS.third_background_text} variant="caption" component="div">Min Price:&nbsp;</CustomTypography>
@@ -77,13 +75,13 @@ const ItemTooptip = ({
                     </Box>
                     <Box width="100%" display="flex" flexDirection="row" alignItems="center" justifyContent="start">
                         <CustomTypography color={COLORS.third_background_text} variant="caption" component="div">Sold Units:&nbsp;</CustomTypography>
-                        <CustomTypography color={COLORS.third_background_text} variant="caption" component="div" fontWeight="bold">{data.soldQuantity}&nbsp;</CustomTypography>
-                        <FormatPercentColor value={data.soldPercent} type={type} />
+                        <CustomTypography color={COLORS.third_background_text} variant="caption" component="div" fontWeight="bold">{data.soldUnits}&nbsp;</CustomTypography>
+                        <FormatPercentColor value={data.soldUnitsGrowth} type={type} />
                     </Box>
                     <Box width="100%" display="flex" flexDirection="row" alignItems="center" justifyContent="start">
                         <CustomTypography color={COLORS.third_background_text} variant="caption" component="div">Purchased Units:&nbsp;</CustomTypography>
-                        <CustomTypography color={COLORS.third_background_text} variant="caption" component="div" fontWeight="bold">{data.boughtQuantity}&nbsp;</CustomTypography>
-                        <FormatPercentColor value={data.boughtPercent} type={type} />
+                        <CustomTypography color={COLORS.third_background_text} variant="caption" component="div" fontWeight="bold">{data.purchasedUnits}&nbsp;</CustomTypography>
+                        <FormatPercentColor value={data.purchasedUnitsGrowth} type={type} />
                     </Box>
                 </Box>
             }
